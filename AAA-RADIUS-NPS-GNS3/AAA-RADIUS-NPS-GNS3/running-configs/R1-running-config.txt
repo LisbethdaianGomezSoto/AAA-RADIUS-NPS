@@ -1,0 +1,9 @@
+! ============================================================
+!  R1 · running-config
+!
+!  ► Reemplaza TODO el contenido de este archivo con la salida real de:
+!        terminal length 0
+!        show running-config
+!    (iniciando sesión como admin por SSH, nivel 15, para ver la
+!     configuración completa).
+! ============================================================

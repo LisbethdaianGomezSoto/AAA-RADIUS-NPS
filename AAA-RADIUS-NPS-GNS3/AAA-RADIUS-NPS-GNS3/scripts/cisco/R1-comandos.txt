@@ -1,0 +1,149 @@
+! ============================================================
+!  R1 · Cisco 2691 · IOS 12.4(25d)
+!  AAA con RADIUS (NPS) · niveles 0 / 5 / 10 · SSH · logs
+!  Pegar por bloques en la consola de GNS3.
+!  Usuarios de RADIUS: user0 / user5 / user10  (clave Passw0rd2026!)
+! ============================================================
+
+
+! ---------- BLOQUE 1 · Base, IP y usuario local ----------
+enable
+configure terminal
+hostname R1
+no ip domain-lookup
+ip domain-name lab.local
+service timestamps log datetime msec
+service timestamps debug datetime msec
+service password-encryption
+banner motd # Acceso autorizado solamente #
+
+interface FastEthernet0/0
+ description Hacia SW-1 y servidor
+ ip address 10.7.1.1 255.255.255.0
+ no shutdown
+exit
+
+username admin privilege 15 secret Cisco2026!
+enable secret Enable2026!
+end
+
+! Verificación
+show ip interface brief
+ping 10.7.1.10
+
+
+! ---------- BLOQUE 2 · SSH ----------
+configure terminal
+crypto key generate rsa
+! (cuando pregunte el tamaño del módulo, escribir 1024)
+ip ssh version 2
+ip ssh time-out 60
+ip ssh authentication-retries 3
+end
+
+! Verificación
+show ip ssh
+
+
+! ---------- BLOQUE 3 · RADIUS (cliente de NPS) ----------
+configure terminal
+aaa new-model
+
+radius-server host 10.7.1.10 auth-port 1812 acct-port 1813 key Radius2026!
+radius-server timeout 3
+radius-server retransmit 1
+aaa group server radius NPS-GRP
+ server 10.7.1.10 auth-port 1812 acct-port 1813
+exit
+ip radius source-interface FastEthernet0/0
+radius-server dead-criteria time 5 tries 3
+radius-server deadtime 1
+end
+
+! Verificación (los tres deben responder: User successfully authenticated)
+test aaa group NPS-GRP user10 Passw0rd2026! new-code
+test aaa group NPS-GRP user5 Passw0rd2026! new-code
+test aaa group NPS-GRP user0 Passw0rd2026! new-code
+
+
+! ---------- BLOQUE 4 · Listas AAA ----------
+configure terminal
+aaa authentication login CON_AUX_AUTH group NPS-GRP local
+aaa authorization console
+aaa authorization exec CON_AUX_AUTHZ group NPS-GRP local
+aaa accounting exec CON_AUX_ACCT start-stop group NPS-GRP
+
+aaa authentication login VTY_LOCAL local
+aaa authorization exec VTY_LOCAL local
+aaa authentication enable default enable
+aaa accounting system default start-stop group NPS-GRP
+end
+
+
+! ---------- BLOQUE 5 · Niveles de privilegio ----------
+! (primero el nivel 10 y al final "show" en el nivel 5)
+configure terminal
+privilege exec level 10 show running-config
+privilege exec level 10 show logging
+privilege exec level 10 configure terminal
+privilege configure level 10 interface
+privilege interface level 10 description
+
+privilege exec level 5 ping
+privilege exec level 5 show ip interface brief
+privilege exec level 5 show version
+privilege exec level 5 show
+end
+
+
+! ---------- BLOQUE 6 · Logs ----------
+configure terminal
+logging buffered 16384 informational
+login block-for 30 attempts 3 within 60
+login on-success log
+login on-failure log
+archive
+ log config
+  logging enable
+exit
+end
+
+
+! ---------- BLOQUE 7 · Líneas (aplicar al final) ----------
+configure terminal
+line con 0
+ login authentication CON_AUX_AUTH
+ authorization exec CON_AUX_AUTHZ
+ accounting exec CON_AUX_ACCT
+ no privilege level
+ exec-timeout 5 0
+ logging synchronous
+exit
+line aux 0
+ login authentication CON_AUX_AUTH
+ authorization exec CON_AUX_AUTHZ
+ accounting exec CON_AUX_ACCT
+ no privilege level
+ exec-timeout 5 0
+ logging synchronous
+exit
+line vty 0 4
+ login authentication VTY_LOCAL
+ authorization exec VTY_LOCAL
+ transport input ssh
+ exec-timeout 5 0
+exit
+end
+write memory
+
+
+! ---------- VERIFICACIÓN FINAL ----------
+terminal length 0
+show running-config | section aaa
+show running-config | section line
+show running-config | include privilege
+show running-config | include radius
+show running-config | include login|archive|logging
+show aaa servers
+show logging | include LOGIN
+show startup-config | include aaa new-model
