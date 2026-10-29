@@ -1,9 +1,232 @@
-! ============================================================
-!  SW-1 · running-config
+SW-1#show running-config
+Building configuration...
+
+Current configuration : 5385 bytes
 !
-!  ► Reemplaza TODO el contenido de este archivo con la salida real de:
-!        terminal length 0
-!        show running-config
-!    (iniciando sesión como admin por SSH, nivel 15, para ver la
-!     configuración completa).
-! ============================================================
+! Last configuration change at 18:10:45 UTC Wed Oct 28 2026
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname SW-1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+logging buffered 16384 informational
+enable secret 5 $1$G/gt$.lM4HKM4maNKjfH6HIIrn1
+!
+username admin privilege 15 secret 5 $1$JRTE$QssjqxR5MKFoo30EUgP6x0
+aaa new-model
+!
+!
+aaa group server radius NPS-GRP
+ server name NPS-SRV
+!
+aaa authentication login CON_AUX_AUTH group NPS-GRP local
+aaa authentication login VTY_LOCAL local
+aaa authentication enable default enable
+aaa authorization console
+aaa authorization exec CON_AUX_AUTHZ group NPS-GRP local
+aaa authorization exec VTY_LOCAL local
+aaa accounting exec CON_AUX_ACCT start-stop group NPS-GRP
+aaa accounting system default start-stop group NPS-GRP
+!
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+ip domain-name lab.local
+ip cef
+login block-for 30 attempts 3 within 60
+login on-failure log
+login on-success log
+no ipv6 cef
+!
+!
+archive
+ log config
+  logging enable
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ negotiation auto
+!
+interface GigabitEthernet0/1
+ negotiation auto
+!
+interface GigabitEthernet0/2
+ negotiation auto
+!
+interface GigabitEthernet0/3
+ negotiation auto
+!
+interface GigabitEthernet1/0
+ negotiation auto
+!
+interface GigabitEthernet1/1
+ negotiation auto
+!
+interface GigabitEthernet1/2
+ negotiation auto
+!
+interface GigabitEthernet1/3
+ negotiation auto
+!
+interface GigabitEthernet2/0
+ negotiation auto
+!
+interface GigabitEthernet2/1
+ negotiation auto
+!
+interface GigabitEthernet2/2
+ negotiation auto
+!
+interface GigabitEthernet2/3
+ negotiation auto
+!
+interface GigabitEthernet3/0
+ negotiation auto
+!
+interface GigabitEthernet3/1
+ negotiation auto
+!
+interface GigabitEthernet3/2
+ negotiation auto
+!
+interface GigabitEthernet3/3
+ negotiation auto
+!
+interface Vlan1
+ description Administracion
+ ip address 10.7.1.2 255.255.255.0
+!
+ip default-gateway 10.7.1.1
+ip forward-protocol nd
+!
+ip http server
+ip http secure-server
+!
+ip ssh time-out 60
+ip ssh version 2
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+!
+ip radius source-interface Vlan1
+!
+!
+!
+!
+radius-server dead-criteria time 5 tries 3
+radius-server retransmit 1
+radius-server timeout 3
+radius-server deadtime 1
+!
+radius server NPS-SRV
+ address ipv4 10.7.1.10 auth-port 1812 acct-port 1813
+ timeout 3
+ retransmit 1
+ key 7 113B18011E07185E54787D65
+!
+!
+control-plane
+!
+privilege interface level 10 description
+privilege configure level 10 interface
+privilege exec level 5 ping
+privilege exec level 10 configure terminal
+privilege exec level 10 configure
+privilege exec level 5 show ip interface brief
+privilege exec level 5 show ip interface
+privilege exec level 5 show ip
+privilege exec level 5 show version
+privilege exec level 10 show running-config
+privilege exec level 10 show logging
+privilege exec level 5 show
+banner exec ^C
+IOSv - Cisco Systems Confidential -
+
+Supplemental End User License Restrictions
+
+This IOSv software is provided AS-IS without warranty of any kind. Under no circumstances may this software be used separate from the Cisco Modeling Labs Software that this software was provided with, or deployed or used as part of a production environment.
+
+By using the software, you agree to abide by the terms and conditions of the Cisco End User License Agreement at http://www.cisco.com/go/eula. Unauthorized use or distribution of this software is expressly prohibited.
+^C
+banner incoming ^C
+IOSv - Cisco Systems Confidential -
+
+Supplemental End User License Restrictions
+
+This IOSv software is provided AS-IS without warranty of any kind. Under no circumstances may this software be used separate from the Cisco Modeling Labs Software that this software was provided with, or deployed or used as part of a production environment.
+
+By using the software, you agree to abide by the terms and conditions of the Cisco End User License Agreement at http://www.cisco.com/go/eula. Unauthorized use or distribution of this software is expressly prohibited.
+^C
+banner login ^C
+IOSv - Cisco Systems Confidential -
+
+Supplemental End User License Restrictions
+
+This IOSv software is provided AS-IS without warranty of any kind. Under no circumstances may this software be used separate from the Cisco Modeling Labs Software that this software was provided with, or deployed or used as part of a production environment.
+
+By using the software, you agree to abide by the terms and conditions of the Cisco End User License Agreement at http://www.cisco.com/go/eula. Unauthorized use or distribution of this software is expressly prohibited.
+^C
+banner motd ^C Acceso autorizado solamente ^C
+!
+line con 0
+ exec-timeout 5 0
+ authorization exec CON_AUX_AUTHZ
+ accounting exec CON_AUX_ACCT
+ logging synchronous
+ login authentication CON_AUX_AUTH
+line aux 0
+ exec-timeout 5 0
+ authorization exec CON_AUX_AUTHZ
+ accounting exec CON_AUX_ACCT
+ login authentication CON_AUX_AUTH
+line vty 0 4
+ exec-timeout 5 0
+ authorization exec VTY_LOCAL
+ login authentication VTY_LOCAL
+ transport input ssh
+line vty 5 15
+ exec-timeout 5 0
+ authorization exec VTY_LOCAL
+ login authentication VTY_LOCAL
+ transport input ssh
+!
+!
+end
+
+SW-1#
