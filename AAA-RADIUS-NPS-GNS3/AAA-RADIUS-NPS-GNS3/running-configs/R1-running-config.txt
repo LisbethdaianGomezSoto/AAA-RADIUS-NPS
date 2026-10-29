@@ -1,9 +1,135 @@
-! ============================================================
-!  R1 · running-config
+R1
+Password:
+R1#show running-config
+Building configuration...
+
+Current configuration : 2696 bytes
 !
-!  ► Reemplaza TODO el contenido de este archivo con la salida real de:
-!        terminal length 0
-!        show running-config
-!    (iniciando sesión como admin por SSH, nivel 15, para ver la
-!     configuración completa).
-! ============================================================
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R1
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 16384 informational
+enable secret 5 $1$L9sF$mLuT79Ql6m9tHBi9WJmIv/
+!
+aaa new-model
+!
+!
+aaa group server radius NPS-GRP
+ server 10.7.1.10 auth-port 1812 acct-port 1813
+!
+aaa authentication login CON_AUX_AUTH group NPS-GRP local
+aaa authentication login VTY_LOCAL local
+aaa authentication enable default enable
+aaa authorization console
+aaa authorization exec CON_AUX_AUTHZ group NPS-GRP local
+aaa authorization exec VTY_LOCAL local
+aaa accounting exec CON_AUX_ACCT start-stop group NPS-GRP
+aaa accounting system default start-stop group NPS-GRP
+!
+aaa session-id common
+memory-size iomem 5
+no ip icmp rate-limit unreachable
+ip cef
+!
+!
+ip auth-proxy max-nodata-conns 3
+ip admission max-nodata-conns 3
+!
+!
+no ip domain lookup
+ip domain name lab.local
+login block-for 30 attempts 3 within 60
+login on-failure log
+login on-success log
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$ZBeN$af1qmZrZpdaU0Pp0RrtbO.
+archive
+log config
+logging enable
+!
+!
+ip tcp synwait-time 5
+ip ssh time-out 60
+ip ssh version 2
+!
+!
+!
+!
+interface FastEthernet0/0
+description Hacia SW-1 y servidor
+ip address 10.7.1.1 255.255.255.0
+duplex auto
+speed auto
+!
+interface FastEthernet0/1
+no ip address
+shutdown
+duplex auto
+speed auto
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+ip radius source-interface FastEthernet0/0
+no cdp log mismatch duplex
+!
+radius-server dead-criteria time 5 tries 3
+radius-server host 10.7.1.10 auth-port 1812 acct-port 1813 key 7 01210700521E155D711E1848
+radius-server retransmit 1
+radius-server timeout 3
+radius-server deadtime 1
+!
+control-plane
+!
+!
+!
+banner motd ^C Acceso autorizado solamente ^C
+privilege interface level 10 description
+privilege configure level 10 interface
+privilege exec level 5 ping
+privilege exec level 10 configure terminal
+privilege exec level 10 configure
+privilege exec level 5 show ip interface brief
+privilege exec level 5 show ip interface
+privilege exec level 5 show ip
+privilege exec level 5 show version
+privilege exec level 10 show logging
+privilege exec level 10 show running-config
+privilege exec level 5 show
+!
+line con 0
+exec-timeout 5 0
+authorization exec CON_AUX_AUTHZ
+accounting exec CON_AUX_ACCT
+logging synchronous
+login authentication CON_AUX_AUTH
+line aux 0
+exec-timeout 5 0
+authorization exec CON_AUX_AUTHZ
+accounting exec CON_AUX_ACCT
+logging synchronous
+login authentication CON_AUX_AUTH
+line vty 0 4
+exec-timeout 5 0
+authorization exec VTY_LOCAL
+login authentication VTY_LOCAL
+transport input ssh
+!
+!
+end
+
+R1#
+
