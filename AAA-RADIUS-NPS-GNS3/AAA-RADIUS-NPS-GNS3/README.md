@@ -158,7 +158,7 @@ AAA-RADIUS-NPS-GNS3/
 ├── running-configs/
 │   ├── R1-running-config.txt
 │   └── SW-1-running-config.txt
-└── topologia/                     ← proyecto de GNS3
+
 ```
 
 ---
