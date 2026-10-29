@@ -60,8 +60,8 @@ no ipv6 cef
 !
 !
 archive
- log config
-  logging enable
+log config
+logging enable
 !
 spanning-tree mode pvst
 spanning-tree extend system-id
@@ -81,56 +81,56 @@ spanning-tree extend system-id
 !
 !
 interface GigabitEthernet0/0
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet0/1
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet0/2
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet0/3
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet1/0
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet1/1
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet1/2
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet1/3
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet2/0
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet2/1
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet2/2
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet2/3
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet3/0
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet3/1
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet3/2
- negotiation auto
+negotiation auto
 !
 interface GigabitEthernet3/3
- negotiation auto
+negotiation auto
 !
 interface Vlan1
- description Administracion
- ip address 10.7.1.2 255.255.255.0
+description Administracion
+ip address 10.7.1.2 255.255.255.0
 !
 ip default-gateway 10.7.1.1
 ip forward-protocol nd
@@ -155,10 +155,10 @@ radius-server timeout 3
 radius-server deadtime 1
 !
 radius server NPS-SRV
- address ipv4 10.7.1.10 auth-port 1812 acct-port 1813
- timeout 3
- retransmit 1
- key 7 113B18011E07185E54787D65
+address ipv4 10.7.1.10 auth-port 1812 acct-port 1813
+timeout 3
+retransmit 1
+key 7 113B18011E07185E54787D65
 !
 !
 control-plane
@@ -205,26 +205,26 @@ By using the software, you agree to abide by the terms and conditions of the Cis
 banner motd ^C Acceso autorizado solamente ^C
 !
 line con 0
- exec-timeout 5 0
- authorization exec CON_AUX_AUTHZ
- accounting exec CON_AUX_ACCT
- logging synchronous
- login authentication CON_AUX_AUTH
+exec-timeout 5 0
+authorization exec CON_AUX_AUTHZ
+accounting exec CON_AUX_ACCT
+logging synchronous
+login authentication CON_AUX_AUTH
 line aux 0
- exec-timeout 5 0
- authorization exec CON_AUX_AUTHZ
- accounting exec CON_AUX_ACCT
- login authentication CON_AUX_AUTH
+exec-timeout 5 0
+authorization exec CON_AUX_AUTHZ
+accounting exec CON_AUX_ACCT
+login authentication CON_AUX_AUTH
 line vty 0 4
- exec-timeout 5 0
- authorization exec VTY_LOCAL
- login authentication VTY_LOCAL
- transport input ssh
+exec-timeout 5 0
+authorization exec VTY_LOCAL
+login authentication VTY_LOCAL
+transport input ssh
 line vty 5 15
- exec-timeout 5 0
- authorization exec VTY_LOCAL
- login authentication VTY_LOCAL
- transport input ssh
+exec-timeout 5 0
+authorization exec VTY_LOCAL
+login authentication VTY_LOCAL
+transport input ssh
 !
 !
 end
