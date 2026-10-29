@@ -21,9 +21,9 @@
 
 <div align="center">
 
-[![▶ Ver el video demostrativo](docs/img/01-topologia.png)](URL_DEL_VIDEO)
 
-### ▶ [**Ver el video demostrativo**](URL_DEL_VIDEO)
+
+### ▶ https://youtu.be/Qd4nEzQ6CCc
 
 </div>
 
@@ -237,6 +237,5 @@ AAA-RADIUS-NPS-GNS3/
 
 Laboratorio de seguridad en redes · AAA con RADIUS y NPS
 
-<sub>Hecho con 💜 y mucha consola.</sub>
 
 </div>
